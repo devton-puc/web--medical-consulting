@@ -1,70 +1,42 @@
-# Getting Started with Create React App
+# Web Medical Consulting - Projeto MVP
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Projeto MVP para disciplina **Desenvolvimento Back End Avançado** 
 
-## Available Scripts
+Este projeto é uma aplicação front-end desenvolvida com React. O objetivo é criar uma interface para gerenciar cadastro  de pacientes e de consultas, permitindo criar, editar, cancelar e visualizar informações.
 
-In the project directory, you can run:
+## Funcionalidades
 
-### `npm start`
+## Pré-requisitos
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Para que a aplicação funcione corretamente, é necessário que tenha o node instalado e instale a aplicação com o comando:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+npm install
+```
 
-### `npm test`
+- **Cadastro de Pacientes**: Permite adicionar novos Pacientes com informações como nome, email, telefone, idade e endereço.
+- **Alteração de Pacientes**: Permite alterar as informações dos Pacientes existentes.
+- **Busca de Pacientes**: Busca as informações dos Pacientes existentes para edição.
+- **Exclusão de Pacientes**: Permite excluir Pacientes do banco de dados.
+- **Visualização de Pacientes**: Lista todos os Pacientes cadastrados filtrando por nome.
+- **Cadastro de Consultas médicas**: Permite adicionar novos Consultas médicass com informações como id do paciente, crm do medico, data do atendimento e sintomas.
+- **Alteração de Consultas médicas**: Permite alterar as informações dos Consultas médicas existentes.
+- **Busca de Consultas médicas**: Busca as informações dos Consultas existentes para edição.
+- **Exclusão de Consultas médicas**: Permite excluir Consultas médicas do banco de dados.
+- **Visualização de Consultas médicas**: Lista todos os Consultas filtrando por sintomas.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## Tecnologias Utilizadas
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **REACT**: React na versão 18.3.1
+- **CSS**: Estilização da interface utilizando Bootstrap para um layout moderno e responsivo.
+- **JavaScript**: Manipulação dinâmica da DOM e comunicação com a API via `fetch`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Como Executar
+Basta executar o comando abaixo:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+npm start
+```
+## Autor
+Clayton Morais de Oliveira
