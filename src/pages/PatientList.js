@@ -2,11 +2,11 @@ import React from "react";
 
 const PatientList = () => {
   return (
-      <div classNameName="card">
-      <div classNameName="card-header">
+      <div className="card">
+      <div className="card-header">
           <h3>Cadastro de Pacientes</h3>
       </div>
-      <div classNameName="card-body">
+      <div className="card-body">
           <form>
               <div className="form-group">
                   <label for="name">Nome do Paciente</label>
