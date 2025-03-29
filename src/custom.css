@@ -1,7 +1,20 @@
+:root {
+    --bs-body-font-family: 'Roboto', sans-serif;
+    --template-primary-color: #023B6D;
+    --template-secondary-color: hsl(208, 89%, 28%); 
+    --template-footer-color: #A9A9A9;
+    --primary-color: #023B6D;
+    --secondary-color: #56595c;
+    --secondary-color-hover: #a4aeb8;
+    --bs-text: #fff;
+  }
+  
+
+
 header {
     height: 56px;
-    background: #023B6D; 
-    color: white;
+    background: var(--template-primary-color); 
+    color: var(--bs-text);
     position: fixed;
     top: 0;
     left: 0;
@@ -15,20 +28,26 @@ header {
 #toggleSidebar {
     background: transparent;
     border: none;
-    color: white;
+    color: var(--bs-text);
     font-size: 24px;
     cursor: pointer;
     margin-right: 10px;
 }
 
 .logo-app {
-    width: 733px;
-  }
+    width: 1186px;
+}
+
+@media (max-width: 768px) {
+    .logo-app {
+        width: 387px;
+    }
+}
 
 footer {
     height: 50px; 
-    background: #B0C4DE; 
-    color: white;
+    background: var(--template-footer-color); 
+    color: var(--bs-text);
     text-align: center;
     position: fixed;
     bottom: 0;
@@ -43,7 +62,7 @@ footer {
 .sidebar {
     width: 250px; 
     height: calc(100vh - 106px); 
-    background: #024987; 
+    background: var(--template-secondary-color); 
     position: fixed;
     top: 56px; 
     left: 0;
@@ -95,3 +114,65 @@ footer {
 .sidebar.collapsed ~ .content {
     margin-left: 80px; 
 }
+
+.bg-primary-custom {
+    background-color: var(--primary-color) !important;
+  }
+  
+  .text-primary-custom {
+    color: var(-bs-text) !important;
+  }
+  
+  .btn-primary-custom {
+    background-color: var(--primary-color) !important;
+    color: var(--bs-text) !important;
+  
+  }
+  
+  .btn-primary-custom:hover {
+    background-color: var(--primary-color-hover) !important;
+    color: var(--bs-text) !important;
+  }
+  
+  .btn-secondary-custom {
+    background-color: var(--secondary-color) !important;
+    color: var(--bs-text) !important;
+  }
+
+/* Spinner.css */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+  
+  .spinner-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  

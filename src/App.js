@@ -9,11 +9,11 @@ import Header from './templates/Header';
 import Footer from './templates/Footer';
 import Navbar from './templates/Navbar';
 
+
 function App() {
-  // Estado para controlar se a sidebar está colapsada
+
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  // Função para alternar o estado da sidebar
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
@@ -35,7 +35,7 @@ function App() {
           </main>
         </div>
         <Footer />
-      </Router>
+      </Router>      
     </>
   );
 }

@@ -7,7 +7,7 @@ const Header = ({ toggleSidebar }) => {
             <button id="toggleSidebar" onClick={toggleSidebar}>
                 <i className="fas fa-bars"></i>
             </button>
-            <h2 className="col-md-11 ms-3">Medical Consulting App</h2>
+            <h2 className="logo-app">Medical Consulting App</h2>
             <div>
                 <a href="#" className="text-white mt-0 me-3"><i className="fas fa-user"></i></a>
                 <a href="#" className="text-white me-3"><i className="fas fa-sign-out-alt"></i></a>

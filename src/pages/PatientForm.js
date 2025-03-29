@@ -1,6 +1,19 @@
 import React from "react";
+import { useSpinner } from '../providers/SpinnerContext';
 
 const PatientForm = () => {
+
+
+    const { showSpinner, hideSpinner } = useSpinner();
+
+    const handleAction = async () => {
+        showSpinner();
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Simular operação
+        hideSpinner(); 
+      };
+    
+
+
   return (
     <>
       <div className="card">
@@ -46,7 +59,7 @@ const PatientForm = () => {
                   </div>
                   <div className="mb-3 d-flex">
                       <button type="reset" className="btn btn-secondary mt-3 me-3">Cancelar</button>
-                      <button type="submit" className="btn btn-primary mt-3">Cadastrar</button>
+                      <button type="button" className="btn btn-primary mt-3" onClick={handleAction}>Cadastrar</button>
                   </div>
               </form>
           </div>
