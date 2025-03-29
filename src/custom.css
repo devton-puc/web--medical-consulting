@@ -1,0 +1,97 @@
+header {
+    height: 56px;
+    background: #023B6D; 
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050; 
+    display: flex;
+    align-items: left;
+    padding: 0 15px;
+}
+
+#toggleSidebar {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.logo-app {
+    width: 733px;
+  }
+
+footer {
+    height: 50px; 
+    background: #B0C4DE; 
+    color: white;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1050; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sidebar {
+    width: 250px; 
+    height: calc(100vh - 106px); 
+    background: #024987; 
+    position: fixed;
+    top: 56px; 
+    left: 0;
+    z-index: 1040; 
+    overflow-y: auto;
+    transition: width 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: left; 
+}
+
+
+.sidebar .nav-link {
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start; 
+}
+
+.sidebar .nav-item {
+    margin-top: 15px;
+}
+
+.sidebar.collapsed .nav-item {
+    margin-top:  15px;
+}
+
+.sidebar.collapsed {
+    width: 80px; 
+}
+
+.sidebar .nav-link span {
+    transition: opacity 0.3s;
+    margin-left: 10px;
+}
+
+.sidebar.collapsed .nav-link span {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    margin-top: 56px; 
+    margin-bottom: 50px; 
+    transition: margin-left 0.3s;
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 80px; 
+}
