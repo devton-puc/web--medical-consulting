@@ -5,9 +5,9 @@ const SpinnerContext = createContext();
 export const SpinnerProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const showSpinner = () => setIsLoading(true);
+  const showSpinner = () => {console.log('showSpinner');setIsLoading(true);} 
 
-  const hideSpinner = () => setIsLoading(false);
+  const hideSpinner = () => {console.log('hideSpinner');setIsLoading(false);}
 
   return (
     <SpinnerContext.Provider value={{ isLoading, showSpinner, hideSpinner }}>

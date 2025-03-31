@@ -5,6 +5,7 @@ import AppointmentList from './pages/AppointmentList';
 import AppointmentForm from './pages/AppointmentForm';
 import PatientList from './pages/PatientList';
 import PatientForm from './pages/PatientForm';
+import AppointmentConfirmation from './pages/AppointmentConfirmation';
 import Header from './templates/Header';
 import Footer from './templates/Footer';
 import Navbar from './templates/Navbar';
@@ -28,9 +29,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/appointment-list" element={<AppointmentList />} />
-              <Route path="/appointment-form" element={<AppointmentForm />} />
+              <Route path="/appointment-form/patient/:patient_id/:action" element={<AppointmentForm />} />
+              <Route path="/appointment-confirmation/:appointment_id" element={<AppointmentConfirmation />} /> 
               <Route path="/patient-list" element={<PatientList />} />
-              <Route path="/patient-form" element={<PatientForm />} />
+              <Route path="/patient-form/:action" element={<PatientForm />} />
             </Routes>
           </main>
         </div>
