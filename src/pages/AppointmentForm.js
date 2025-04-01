@@ -10,43 +10,68 @@ const AppointmentForm = () => {
   const [loading, setLoading] = useState(false);
   const { patient_id, action } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { showSpinner, hideSpinner } = useSpinner();
-  const { showAlert, showConfirm } = useModal();
+  const { showAlert } = useModal();
 
   const initialState = {
     patient_id: patient_id,
     doctor_crm: "",
     date_time: "",
     symptoms: "",
+	medications: []
   };
 
   const [formData, setFormData] = useState(initialState);
   const [medications, setMedications] = useState([]);
-
-  	useLayoutEffect(() => {        
-		  if (action === 'create'){
-				  setLoading(true)
-				  return;
-		  }
-		  showSpinner();
-		  AppointmentService.getAppointmentById(action)
-			  .then(data => {
-				  console.log(JSON.stringify(data));
-				  hideSpinner();
-				  setLoading(true);
-				  setFormData({
-					patient_id: data.patient_id || "",
-					doctor_crm: data.doctor_crm || "",
-					date_time: data.date_time || "",
-					symptoms: data.symptoms || ""
-				 });
-				 setMedications(data.medications);
-		  }).catch((error) => console.error("Erro ao carregar dados:", error));
   
-	  }, []);
+  const fetchAppointment = ()=>{
+	if (action === 'create'){
+		setLoading(true)
+		return;
+	}
+	showSpinner();
+	AppointmentService.getAppointmentById(action)
+		.then(data => {			
+			setLoading(true);
+			setFormData({
+			patient_id: data.patient_id || "",
+			doctor_crm: data.doctor_crm || "",
+			date_time: data.date_time || "",
+			symptoms: data.symptoms || "",
+			medications: data.medications || [],
+		});
+		setMedications(data.medications);
+		hideSpinner();
+		}).catch((error) => {
+			console.error("Erro ao carregar os dados:", error);            
+			showAlert("Nenhum dado encontrado para este CPF","danger");
+			setLoading(false);
+			hideSpinner();
+	  });
+  }
 
-  
+  const fetchGenerateMedications = ()=>{
+	if (!formData.symptoms) {        
+        return;
+      };
+	const jsonData = { symptoms: formData.symptoms };
+	showSpinner();
+	AppointmentService.generateMedications(jsonData)
+		.then(data => {		
+			setLoading(true);
+			setMedications(data);
+			setFormData((prevData) => ({
+				...prevData,
+				medications: data
+			}));
+				
+			hideSpinner();
+		}).catch(error => {
+			console.error("Erro ao carregar os dados:", error);
+            showAlert(`Erro ao gerar os medicamentos: ${error}`,"danger");
+        });
+		
+  }
 
   const changeFormData = (data = initialState) => {
     setFormData(data);
@@ -63,18 +88,36 @@ const AppointmentForm = () => {
 	}
   };
 
-  const handleSubmit = (e) => {
-	e.preventDefault();
-	console.log(formData);
-   /* navigate('/appointment-list', {
-	  state: formData
-	}); */
+  const handleSubmit = () => {	
+	showSpinner();
+	AppointmentService.createAppointment(formData)
+		.then(data => {		
+			setLoading(true);
+			hideSpinner();
+		    navigate('/appointment-list', {
+	  			state: formData
+			}); 
+		}).catch(error => {
+			console.error("Erro ao criar os dados:", error);
+			showAlert(`Não foi possível criar a consulta`,"danger");
+		});
   };
 
   const handleCancel = () =>{
 	changeFormData();
 	setMedications([]);
+	cancelAppointment();
   }
+
+  useLayoutEffect(() => {        
+	fetchAppointment();
+  }, []);
+
+  const cancelAppointment = ()=>{
+	navigate(`/appointment-list`, {
+		  state: formData
+	  }); 
+   }
 
   return (
     <>
@@ -98,11 +141,11 @@ const AppointmentForm = () => {
 						  <label for="symptoms">Sintomas Apresentados</label>
 						  <textarea className="form-control" name="symptoms" value={formData.symptoms} onChange={handleChange} rows="4" placeholder="Descreva os sintomas"></textarea>
 					  </div>
-	  
+
 					  <div className="mb-3 d-flex m-2">
-						  <button type="reset" className="btn btn-secondary mt-3 me-3" onClick={handleCancel}>Cancelar</button>
-						  <button type="submit" className="btn btn-primary mt-3" onClick={handleSubmit}>Cadastrar</button>
+						  <button type="button" className="btn btn-primary mt-3" onClick={() => fetchGenerateMedications()}>Gerar Medicações</button>
 					  </div>
+
 				  </form>
 				  {medications.length > 0 && (
 					<>
@@ -125,8 +168,13 @@ const AppointmentForm = () => {
 						))}
 					  </tbody>
 					</table>
+
 			      	</>
 				)}
+				<div className="mb-3 d-flex m-2">
+					<button type="reset" className="btn btn-secondary mt-3 me-3" onClick={() => handleCancel()}>Cancelar</button>
+					<button type="button" className="btn btn-primary mt-3" onClick={() => handleSubmit()}>Cadastrar</button>
+		   	    </div>
 			  </div>
 			</div>
 	  )}

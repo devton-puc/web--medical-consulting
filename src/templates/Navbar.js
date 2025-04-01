@@ -10,10 +10,10 @@ const Navbar = ({ isCollapsed }) => {
           <Link to="/" className="nav-link text-white"><i className="fas fa-home"></i><span>Inicio</span></Link>
         </li>
         <li className="nav-item">
-          <Link to="/patient-list" className="nav-link text-white"><i className="fas fa-home"></i><span>Pacientes</span></Link>
+          <Link to="/patient-list" className="nav-link text-white"><i className="fas fa-hospital-user"></i><span>Pacientes</span></Link>
         </li>
         <li className="nav-item">
-          <Link to="/appointment-list" className="nav-link text-white"><i className="fas fa-home"></i><span>Consultas</span></Link>
+          <Link to="/appointment-list" className="nav-link text-white"><i className="fas fa-stethoscope"></i><span>Consultas</span></Link>
         </li>
       </ul>
     </nav>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactComponent as LogoSVG } from '../assets/logo.svg';
+import logo from '../assets/logo.png';
 const Header = ({ toggleSidebar }) => {
   return (
      <header>
@@ -7,7 +7,10 @@ const Header = ({ toggleSidebar }) => {
             <button id="toggleSidebar" onClick={toggleSidebar}>
                 <i className="fas fa-bars"></i>
             </button>
-            <h2 className="logo-app">Medical Consulting App</h2>
+            <div class="logo-app d-flex align-items-left">
+                <img src={logo} alt="Logo" className="img-logo me-2" />
+                <h2 className="mb-0">Medical Consulting</h2>
+            </div>
             <div>
                 <a href="#" className="text-white mt-0 me-3"><i className="fas fa-user"></i></a>
                 <a href="#" className="text-white me-3"><i className="fas fa-sign-out-alt"></i></a>

@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import AddressService from "../services/AddressService";
 import PatientService from "../services/PatientService";
 import { useSpinner } from '../providers/SpinnerContext';
@@ -11,9 +11,8 @@ const PatientForm = () => {
     const [loading, setLoading] = useState(false);
     const { action } = useParams();
     const navigate = useNavigate();
-    const location = useLocation();
     const { showSpinner, hideSpinner } = useSpinner();
-    const { showAlert, showConfirm } = useModal();
+    const { showAlert, } = useModal();
   
     const initialState = {        
             name: "",
@@ -110,16 +109,30 @@ const PatientForm = () => {
     };
 
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(formData);
-       /* navigate('/patient-list', {
-          state: formData
-        }); */
+    const handleSubmit = () => {
+    showSpinner();
+        PatientService.createPatient(formData)
+            .then(data => {		
+                setLoading(true);
+                hideSpinner();
+                navigate('/patient-list', {
+                    state: formData
+                }); 
+            }).catch(error => {
+                console.error("Erro ao criar os dados:", error);
+                showAlert(`Não foi possível criar o paciente`,"danger");
+            });
     };
 
     const handleCancel = () =>{
         changeFormData();
+        cancelPatient();
+    }
+
+    const cancelPatient = ()=>{
+        navigate(`/patient-list`, {
+              state: formData
+        }); 
     }
     
 
@@ -203,7 +216,7 @@ const PatientForm = () => {
                         <label for="zip">CEP</label>
                         <div className="input-group">
                             <input type="text" className="form-control" name="address.zipcode" placeholder="Digite o CEP" value={formData.address.zipcode} onChange={handleChange} />
-                            <button type="button" className="btn btn-secondary" id="searchZip" onClick={handleFindAddress}>Buscar</button>
+                            <button type="button" className="btn btn-secondary" id="searchZip" onClick={() => handleFindAddress()}>Buscar</button>
                         </div>
                     </div>
                     
@@ -239,8 +252,8 @@ const PatientForm = () => {
                     )}
 
                     <div className="mb-3 d-flex">
-                        <button type="reset" className="btn btn-secondary mt-3 me-3" onClick={handleCancel}>Cancelar</button>
-                        <button type="button" className="btn btn-primary mt-3" onClick={handleSubmit}>Cadastrar</button>
+                        <button type="reset" className="btn btn-secondary mt-3 me-3" onClick={() => handleCancel()}>Cancelar</button>
+                        <button type="button" className="btn btn-primary mt-3" onClick={() => handleSubmit()}>Cadastrar</button>
                     </div>
                 </form>
             </div>

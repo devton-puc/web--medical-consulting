@@ -1,19 +1,107 @@
-import React from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { useModal } from '../providers/ModalContext';
+import AppointmentService from "../services/AppointmentService";
+import PatientService from "../services/PatientService";
+import PaginatedTable from "../components/PaginatedTable";
+import { useSpinner } from '../providers/SpinnerContext';
+import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { HttpError } from "../exceptions/HttpError";
 
 const AppointmentList = () => {
 
+  const [formData, setFormData] = useState({ personalId: ""});
+  const [appointments, setAppointments] = useState([]);
+  const [patient, setPatient] = useState();
+  const [patientId, setPatientId] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { showAlert, showConfirm } = useModal();
+  const { showSpinner, hideSpinner } = useSpinner();
+  const navigate = useNavigate();
 
-  const cancelAppointment = (row) => {
+  useLayoutEffect(() => {
+    fetchAppointments(currentPage);
+  }, [currentPage,patientId]);
 
-    showConfirm(`Você tem certeza que deseja cancelar o agendamento do paciente selecionado?`, (result) => {
+  const fetchPatientAppointment = ()=> {
+      if (!formData.personalId) {        
+        return;
+      };
+      
+      showSpinner();
+      PatientService.getPatientByPersonalId(formData.personalId)
+          .then((data) => {
+            console.log(JSON.stringify(data));
+            setPatient(data);
+            setPatientId(data.id);
+            fetchAppointments(currentPage);
+          })
+          .catch((error) => {
+            console.error("Erro ao carregar os dados:", error);
+            if (error instanceof HttpError && error.httpStatus == 404) {
+                showAlert("Nenhum dado encontrado para este CPF","danger");
+            }else{
+                showAlert(`Erro: ${error}`,"danger");
+            }
+            hideSpinner();
+          });
+  }
+
+  const fetchAppointments = (page) => {
+      showSpinner();
+      const params = {
+        page: page,
+        per_page: 5,
+        patient_id: patientId,  
+      };
+      AppointmentService.listAppointments(params)
+        .then((data) => {
+          setAppointments(data.appointments);
+          setTotalPages(Math.ceil(data.total / data.per_page));
+          hideSpinner();
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar os dados:", error);
+          hideSpinner();
+        });
+  };
+
+  const deleteAppointment = (appointmentId)=>{
+    showConfirm(`Você tem certeza que deseja excluir o paciente selecionado?`, (result) => {
       if (result) {
-        showAlert('Agendamento cancelado com sucesso.', 'success');
+        showSpinner();
+        AppointmentService.deleteAppointmentById(appointmentId)
+          .then((data) => {
+            showAlert('Consulta excluída com sucesso');
+            setCurrentPage(1);
+            fetchAppointments(currentPage);
+          })
+          .catch((error) => {
+            showAlert("Erro ao excluir a consulta","danger");
+            hideSpinner();
+          });
       }
     });
-
   };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+    setPatient();
+    setAppointments([]);
+    setCurrentPage(1);
+  };
+
+  const createAppointment = ()=>{
+      navigate(`/appointment-form/patient/${patientId}/create`, {
+	        state: formData
+	    }); 
+  }
+
 
 
   return (
@@ -23,27 +111,78 @@ const AppointmentList = () => {
           <h3>Agendamentos Marcados</h3>
       </div>
       <div className="card-body">
-          <form>
-              <div className="form-group">
-                  <label for="name">Nome do Paciente</label>
-                  <div className="input-group">
-                      <input type="text" className="form-control" id="name" placeholder="Digite o nome do paciente" />
-                      <button type="button" className="btn btn-secondary" onClick={cancelAppointment} id="searchPatient">Buscar</button>
-                  </div>
+          <div className="card m-3">
+              <div className="card-body">
+                <div className="form-group">
+                  <label for="name">CPF do Paciente</label>
+                  <form>
+                    <div className="input-group">
+                        <input type="text" className="form-control" name="personalId" value={formData.personalId} onChange={handleChange} placeholder="Digite o cpf do paciente" />
+                        <a className="btn btn-secondary" onClick={()=>fetchPatientAppointment()} id="searchPatient">Buscar</a>
+                    </div>
+                  </form>
+                </div>
               </div>
-          </form>
-          <table className="mt-3 table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Paciente</th>
-                        <th>Crm do Medico</th>
-                        <th>Data da Consulta</th>
-                    </tr>
-                </thead>
-                <tbody id="appointmentTableBody">
-                </tbody>
-          </table>
+          </div>
+          { patient && appointments && (
+              <>
+                <div className="card m-3">
+                      <div className="card-header">
+                      <h4>Detalhes do Paciente</h4>
+                      </div>
+                      <div className="card-body">
+                        <div className="col-md-4">
+                              <strong>Nome:</strong>
+                              <p>{patient.name}</p>
+                        </div>
+                        <div className="col-md-4">
+                          <strong>CPF:</strong>
+                          <p>{patient.personal_id}</p>
+                        </div>
+                        <div className="col-md-4">
+                          <strong>Data de Nascimento:</strong>
+                          <p>{patient.birth_date}</p>
+                        </div>
+                        <div className="col-md-4">
+						                <button type="button" className="btn btn-primary mt-3" onClick={() => createAppointment()}>Criar Consulta</button>
+					              </div>
+                        <div className="m-3"></div>
+                        <div className="card m-0">
+                          <div className="card-header">
+                              <h4>Consultas efetuadas</h4>
+                          </div>
+                          <div className="card-body">
+                            <PaginatedTable
+                                  currentPage={currentPage}
+                                  totalPages={totalPages} 
+                                  onPageChange={setCurrentPage} >
+                                  <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Data da Consulta</th>
+                                            <th>Crm do Medico</th>
+                                            <th>Sintomas apresentados</th>
+                                            <th>&nbsp;</th>
+                                        </tr>
+                                  </thead>
+                                  <tbody>
+                                    {appointments.map((appointment) => (
+                                      <tr key={appointment.id}>
+                                        <td>{appointment.id}</td>
+                                        <td><Link to={`/appointment-form/patient/${patient.id}/${appointment.id}`}>{new Date(appointment.date_time).toLocaleString()}</Link></td>
+                                        <td>{appointment.doctor_crm}</td>
+                                        <td>{appointment.symptoms}</td>
+                                        <td><button type="button" className="btn btn-danger" onClick={() => deleteAppointment(appointment.id)} >Excluir</button></td>
+                                      </tr>
+                                    ))}
+                                  </tbody>       
+                            </PaginatedTable> 
+                          </div>
+                        </div>
+                    </div>
+                </div>
+              </>
+          )}     
         </div>  
       </div>
       </>

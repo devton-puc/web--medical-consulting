@@ -35,7 +35,12 @@ header {
 }
 
 .logo-app {
-    width: 1186px;
+    width: 841px;
+}
+
+.img-logo{
+  width: 35px;
+  height: 35px;
 }
 
 @media (max-width: 768px) {

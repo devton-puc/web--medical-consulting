@@ -1,4 +1,5 @@
 import httpStrategies from "./HttpStrategies";
+import { HttpError } from "../exceptions/HttpError";
 
 const AddressService = () => {
     const BASE_URL = "http://localhost:5000/bff/zipcode";
@@ -6,7 +7,8 @@ const AddressService = () => {
     const getAddressByCep = async (cep) => {
         const response = await fetch(`${BASE_URL}/${cep}`,httpStrategies.GET);
         if (!response.ok) {
-            throw new Error("Erro ao buscar o endereço.");
+            const errorBody = await response.json().catch(() => null); 
+            throw new HttpError("Erro ao executar o aerviço.", response.status, errorBody);
         }
         return await response.json();
 
