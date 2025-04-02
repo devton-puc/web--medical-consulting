@@ -1,16 +1,18 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useModal } from '../providers/ModalContext';
 import PatientService from "../services/PatientService";
 import PaginatedTable from "../components/PaginatedTable";
 import { useSpinner } from '../providers/SpinnerContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import { HttpError } from "../exceptions/HttpError";
-
+import { useLocation } from 'react-router-dom';
+import { getAlertMessage } from '../utils/MessageUtils';
+import { updateFormData } from "../utils/FormUtils";
 
 
 const PatientList = () => {
 
+     
     const [formData, setFormData] = useState({ name: ""});
     const [patients, setPatients] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,6 +21,14 @@ const PatientList = () => {
     const { showAlert, showConfirm } = useModal();
     const { showSpinner, hideSpinner } = useSpinner();
     const navigate = useNavigate();
+    const location = useLocation();  
+    const { success, message } = location?.state || {};
+
+    useEffect(() => {
+      if (success !== undefined && message) {
+        showAlert(message, success ? 'success' : 'danger');
+      }
+    }, [location]); 
 
     useLayoutEffect(() => {
         fetchPatients(currentPage);
@@ -34,11 +44,9 @@ const PatientList = () => {
                 showAlert('Consulta excluída com sucesso');
                 setCurrentPage(1);
                 fetchPatients(currentPage);
-              })
-              .catch((error) => {
-                console.error("Erro ao excluir o paciente:", error);
-                setLoading(false);
-                hideSpinner();
+              }).catch(error => {
+                  showAlert(getAlertMessage(error), "danger"); 
+                  hideSpinner();           
               });
           }
         });
@@ -60,24 +68,14 @@ const PatientList = () => {
               setTotalPages(Math.ceil(data.total / data.per_page));
               setLoading(false);
               hideSpinner();
-            })
-            .catch((error) => {
-              if (error instanceof HttpError && error.httpStatus == 204) {
-                  showAlert("Nenhum dado encontrado","danger");
-              }else{
-                  showAlert(`Erro: ${error}`,"danger");
-              }
-              setLoading(false);
-              hideSpinner();
+            }).catch(error => {
+                showAlert(getAlertMessage(error), "danger"); 
+                hideSpinner();           
             });
     };
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-          ...prevState,
-          [name]: value
-        }));
+        updateFormData(e,setFormData);
         setPatients([]);
         setCurrentPage(1);
     };
@@ -127,7 +125,7 @@ const PatientList = () => {
                    {patients.map((patient) => (
                     <tr key={patient.id}>
                         <td>{patient.id}</td>
-                        <td><Link to={`/patient-form/patient/${patient.id}`}>{patient.name}</Link></td>
+                        <td><Link to={`/patient-form/${patient.id}`}>{patient.name}</Link></td>
                         <td>{patient.birth_date}</td>
                         <td>{patient.phone}</td>
                         <td><button type="button" className="btn btn-danger" onClick={() => deletePatient(patient.id)} >Excluir</button></td>

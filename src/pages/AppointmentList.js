@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import { useModal } from '../providers/ModalContext';
 import AppointmentService from "../services/AppointmentService";
 import PatientService from "../services/PatientService";
@@ -6,7 +6,10 @@ import PaginatedTable from "../components/PaginatedTable";
 import { useSpinner } from '../providers/SpinnerContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { HttpError } from "../exceptions/HttpError";
+import { getAlertMessage } from '../utils/MessageUtils';
+import { updateFormData } from "../utils/FormUtils";
 
 const AppointmentList = () => {
 
@@ -19,16 +22,24 @@ const AppointmentList = () => {
   const { showAlert, showConfirm } = useModal();
   const { showSpinner, hideSpinner } = useSpinner();
   const navigate = useNavigate();
+  const location = useLocation();  
+  const { success, message } = location?.state || {};
+
+  
+  useEffect(() => {
+      if (success !== undefined && message) {
+          showAlert(message, success ? 'success' : 'danger');
+      }
+  }, [location]); 
 
   useLayoutEffect(() => {
-    fetchAppointments(currentPage);
+     fetchAppointments(currentPage);
   }, [currentPage,patientId]);
 
   const fetchPatientAppointment = ()=> {
       if (!formData.personalId) {        
         return;
-      };
-      
+      };      
       showSpinner();
       PatientService.getPatientByPersonalId(formData.personalId)
           .then((data) => {
@@ -36,19 +47,17 @@ const AppointmentList = () => {
             setPatient(data);
             setPatientId(data.id);
             fetchAppointments(currentPage);
-          })
-          .catch((error) => {
-            console.error("Erro ao carregar os dados:", error);
-            if (error instanceof HttpError && error.httpStatus == 404) {
-                showAlert("Nenhum dado encontrado para este CPF","danger");
-            }else{
-                showAlert(`Erro: ${error}`,"danger");
-            }
-            hideSpinner();
+          }).catch(error => {
+            showAlert(getAlertMessage(error), "danger");
+            hideSpinner();           
           });
   }
 
   const fetchAppointments = (page) => {
+      
+      if (!formData.personalId && !patientId) {        
+        return;
+      }; 
       showSpinner();
       const params = {
         page: page,
@@ -60,10 +69,11 @@ const AppointmentList = () => {
           setAppointments(data.appointments);
           setTotalPages(Math.ceil(data.total / data.per_page));
           hideSpinner();
-        })
-        .catch((error) => {
-          console.error("Erro ao carregar os dados:", error);
-          hideSpinner();
+        }).catch(error => {
+          if (error instanceof HttpError && error.httpStatus != 204){
+            showAlert(getAlertMessage(error), "danger");
+          }          
+          hideSpinner();           
         });
   };
 
@@ -76,21 +86,16 @@ const AppointmentList = () => {
             showAlert('Consulta excluída com sucesso');
             setCurrentPage(1);
             fetchAppointments(currentPage);
-          })
-          .catch((error) => {
-            showAlert("Erro ao excluir a consulta","danger");
-            hideSpinner();
+          }).catch(error => {
+            showAlert(getAlertMessage(error), "danger");
+            hideSpinner();           
           });
       }
     });
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    updateFormData(e, setFormData);
     setPatient();
     setAppointments([]);
     setCurrentPage(1);

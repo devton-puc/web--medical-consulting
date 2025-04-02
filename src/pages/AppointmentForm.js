@@ -4,25 +4,44 @@ import AppointmentService from "../services/AppointmentService";
 import { useSpinner } from '../providers/SpinnerContext';
 import { useModal } from '../providers/ModalContext';
 import { useParams } from "react-router-dom";
+import { getAlertMessage } from '../utils/MessageUtils';
+import { updateFormData } from "../utils/FormUtils";
 
 const AppointmentForm = () => {
 
-  const [loading, setLoading] = useState(false);
   const { patient_id, action } = useParams();
+  const initialState = {
+		patient_id: patient_id,
+		doctor_crm: "",
+		date_time: "",
+		symptoms: "",
+		medications: []
+  };
+
+  const [loading, setLoading] = useState(false);  
   const navigate = useNavigate();
   const { showSpinner, hideSpinner } = useSpinner();
   const { showAlert } = useModal();
-
-  const initialState = {
-    patient_id: patient_id,
-    doctor_crm: "",
-    date_time: "",
-    symptoms: "",
-	medications: []
-  };
-
+  console.log(action);
+  const [idAppointment, setIdAppointment] = useState(action);
   const [formData, setFormData] = useState(initialState);
   const [medications, setMedications] = useState([]);
+
+  const changeFormData = (data = initialState) => {
+    setFormData(data);
+  };
+
+  const handleChange = (e) => {
+    const { name } = e.target;
+	updateFormData(e, setFormData);
+	if (name === "symptoms"){
+		setMedications([]);
+	}
+  };
+
+  useLayoutEffect(() => {        
+	fetchAppointment();
+  }, []);
   
   const fetchAppointment = ()=>{
 	if (action === 'create'){
@@ -30,25 +49,25 @@ const AppointmentForm = () => {
 		return;
 	}
 	showSpinner();
-	AppointmentService.getAppointmentById(action)
+	AppointmentService.getAppointmentById(idAppointment)
 		.then(data => {			
-			setLoading(true);
-			setFormData({
-			patient_id: data.patient_id || "",
-			doctor_crm: data.doctor_crm || "",
-			date_time: data.date_time || "",
-			symptoms: data.symptoms || "",
-			medications: data.medications || [],
-		});
-		setMedications(data.medications);
-		hideSpinner();
-		}).catch((error) => {
-			console.error("Erro ao carregar os dados:", error);            
-			showAlert("Nenhum dado encontrado para este CPF","danger");
-			setLoading(false);
+				setLoading(true);
+				setFormData({
+				patient_id: data.patient_id || "",
+				doctor_crm: data.doctor_crm || "",
+				date_time: data.date_time || "",
+				symptoms: data.symptoms || "",
+				medications: data.medications || [],
+			});
+			setMedications(data.medications);
 			hideSpinner();
-	  });
-  }
+
+		}).catch(error => {
+			showAlert(getAlertMessage(error), "danger");
+			setLoading(false); 
+			hideSpinner();           
+		});
+  };
 
   const fetchGenerateMedications = ()=>{
 	if (!formData.symptoms) {        
@@ -67,40 +86,63 @@ const AppointmentForm = () => {
 				
 			hideSpinner();
 		}).catch(error => {
-			console.error("Erro ao carregar os dados:", error);
-            showAlert(`Erro ao gerar os medicamentos: ${error}`,"danger");
-        });
+			showAlert(getAlertMessage(error), "danger");
+			hideSpinner();           
+		});
 		
   }
 
-  const changeFormData = (data = initialState) => {
-    setFormData(data);
+  const fetchCreateAppointment = () =>{
+		AppointmentService.createAppointment(formData)
+			.then(data => {		
+				setLoading(true);
+				hideSpinner();
+				navigate('/appointment-list', 
+					{ state: 
+						{ success: true, 
+							message: 'Consulta Criada com sucesso.' 
+					} 
+				});
+			}).catch(error => {
+				showAlert(getAlertMessage(error), "danger");
+				hideSpinner();           
+			});
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-	if (name === "symptoms"){
-		setMedications([]);
-	}
+  const fetchUpdateAppointment = () =>{		
+		AppointmentService.updateAppointmentById(idAppointment, formData)
+			.then(data => {		
+				setLoading(true);
+				hideSpinner();
+				navigate('/appointment-list', 
+					{ state: 
+						{ success: true, 
+							message: 'Consulta Criada com sucesso.' 
+					} 
+				});
+			}).catch(error => {
+				showAlert(getAlertMessage(error), "danger");
+				hideSpinner();           
+			});
   };
+
+  const actionHandlers = {
+	create: fetchCreateAppointment,
+	default: fetchUpdateAppointment
+  }; 
+
+  const handleAction = (action) => {
+	console.log(idAppointment);
+	const executeAction = action === "create" 
+	? actionHandlers.create 
+	: actionHandlers.default;
+	executeAction();
+  };
+
 
   const handleSubmit = () => {	
 	showSpinner();
-	AppointmentService.createAppointment(formData)
-		.then(data => {		
-			setLoading(true);
-			hideSpinner();
-		    navigate('/appointment-list', {
-	  			state: formData
-			}); 
-		}).catch(error => {
-			console.error("Erro ao criar os dados:", error);
-			showAlert(`Não foi possível criar a consulta`,"danger");
-		});
+	handleAction(action);
   };
 
   const handleCancel = () =>{
@@ -108,10 +150,6 @@ const AppointmentForm = () => {
 	setMedications([]);
 	cancelAppointment();
   }
-
-  useLayoutEffect(() => {        
-	fetchAppointment();
-  }, []);
 
   const cancelAppointment = ()=>{
 	navigate(`/appointment-list`, {

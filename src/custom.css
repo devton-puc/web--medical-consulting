@@ -144,7 +144,6 @@ footer {
     color: var(--bs-text) !important;
   }
 
-/* Spinner.css */
 .spinner-overlay {
     position: fixed;
     top: 0;
@@ -173,6 +172,14 @@ footer {
     border-top: 6px solid #007bff;
     border-radius: 50%;
     animation: spin 1s linear infinite;
+  }
+
+  .modal-alert {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1050;
+    min-width: 300px;
   }
   
   @keyframes spin {

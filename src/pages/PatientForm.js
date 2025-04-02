@@ -5,15 +5,18 @@ import PatientService from "../services/PatientService";
 import { useSpinner } from '../providers/SpinnerContext';
 import { useModal } from '../providers/ModalContext';
 import { useParams } from "react-router-dom";
+import { getAlertMessage } from '../utils/MessageUtils';
+import { updateFormData, updateFormDataParent } from "../utils/FormUtils";
 
 const PatientForm = () => {
 
     const [loading, setLoading] = useState(false);
+   
     const { action } = useParams();
     const navigate = useNavigate();
     const { showSpinner, hideSpinner } = useSpinner();
     const { showAlert, } = useModal();
-  
+    const [idPatient, setIdPatient] = useState(action);
     const initialState = {        
             name: "",
             personal_id: "",
@@ -37,10 +40,8 @@ const PatientForm = () => {
                 return;
         }
         showSpinner();
-        PatientService.getPatientById(action)
-            .then(data => {
-                console.log(JSON.stringify(data));
-                hideSpinner();
+        PatientService.getPatientById(idPatient)
+            .then(data => {                
                 setLoading(true);
                 setFormData({
                     
@@ -59,7 +60,11 @@ const PatientForm = () => {
                         number: data.address?.number || "",
                       },
                     });
-        }).catch((error) => console.error("Erro ao carregar dados:", error));
+                hideSpinner();
+        }).catch(error => {
+            showAlert(getAlertMessage(error), "danger"); 
+            hideSpinner();           
+        });
 
     }, []);
 
@@ -89,39 +94,64 @@ const PatientForm = () => {
     ]);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => {
-            const keys = name.split('.');
-            let updatedData = { ...prevData };
-    
-            if (keys.length > 1) {
-                const [parentKey, childKey] = keys;
-                updatedData[parentKey] = {
-                    ...updatedData[parentKey],
-                    [childKey]: value,
-                };
-            } else {
-                updatedData[name] = value;
-            }
-    
-            return updatedData;
+        const { name } = e.target;
+        updateFormDataParent(e,setFormData);
+
+    };
+
+ 
+
+
+    const fetchCreatePatient = ()=>{
+        PatientService.createPatient(formData)
+        .then(data => {		
+            setLoading(true);
+            hideSpinner();
+            navigate('/patient-list', 
+                { state: 
+                    { success: true, 
+                        message: 'Paciente Criado com sucesso.' 
+                } 
+            });
+        }).catch(error => {
+            showAlert(getAlertMessage(error), "danger"); 
+            hideSpinner();           
         });
     };
 
+    const fetchUpdatePatient = ()=>{
+        PatientService.updatePatientById(idPatient, formData)
+        .then(data => {		
+            setLoading(true);
+            hideSpinner();
+            navigate('/patient-list', 
+                { state: 
+                    { success: true, 
+                        message: 'Informações salvas com sucesso.' 
+                } 
+            });
+        }).catch(error => {
+            showAlert(getAlertMessage(error), "danger"); 
+            hideSpinner();           
+        });
+    };
+
+    const actionHandlers = {
+        create: fetchCreatePatient,
+        default: fetchUpdatePatient
+    }; 
+
+    const handleAction = (action) => {
+        const executeAction = action === "create" 
+        ? actionHandlers.create 
+        : actionHandlers.default;
+        executeAction();
+    };
+    
 
     const handleSubmit = () => {
-    showSpinner();
-        PatientService.createPatient(formData)
-            .then(data => {		
-                setLoading(true);
-                hideSpinner();
-                navigate('/patient-list', {
-                    state: formData
-                }); 
-            }).catch(error => {
-                console.error("Erro ao criar os dados:", error);
-                showAlert(`Não foi possível criar o paciente`,"danger");
-            });
+        showSpinner();
+        handleAction(action);
     };
 
     const handleCancel = () =>{
@@ -130,11 +160,10 @@ const PatientForm = () => {
     }
 
     const cancelPatient = ()=>{
-        navigate(`/patient-list`, {
-              state: formData
+        navigate('/patient-list', {
+            state: formData
         }); 
-    }
-    
+    }    
 
     const handleFindAddress = async () => {
         showSpinner();
@@ -143,10 +172,8 @@ const PatientForm = () => {
             return;
         };
     
-        try {
-          await AddressService.getAddressByCep(formData.address.zipcode)            
-          .then(data => {
-          
+        await AddressService.getAddressByCep(formData.address.zipcode)            
+            .then(data => {          
                 setFormData((prevData) => ({
                     ...prevData,
                     address: {
@@ -157,14 +184,12 @@ const PatientForm = () => {
                         zipcode: data.zipcode || "",
                     },
                 }));
-
-          }).catch(error => {
-            showAlert(`Erro ao buscar o Cep: ${error}`,"danger");
-            resetAddressForm();
-          });
-        }finally{
-            hideSpinner();
-        }
+                hideSpinner();
+            }).catch(error => {
+                showAlert(getAlertMessage(error), "danger"); 
+                hideSpinner();           
+            });
+        
     };
 
 
