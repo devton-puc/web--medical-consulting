@@ -14,16 +14,9 @@ Para que a aplicação funcione corretamente, é necessário que tenha o node in
 npm install
 ```
 
-- **Cadastro de Pacientes**: Permite adicionar novos Pacientes com informações como nome, email, telefone, idade e endereço.
-- **Alteração de Pacientes**: Permite alterar as informações dos Pacientes existentes.
-- **Busca de Pacientes**: Busca as informações dos Pacientes existentes para edição.
-- **Exclusão de Pacientes**: Permite excluir Pacientes do banco de dados.
-- **Visualização de Pacientes**: Lista todos os Pacientes cadastrados filtrando por nome.
-- **Cadastro de Consultas médicas**: Permite adicionar novos Consultas médicass com informações como id do paciente, crm do medico, data do atendimento e sintomas.
-- **Alteração de Consultas médicas**: Permite alterar as informações dos Consultas médicas existentes.
-- **Busca de Consultas médicas**: Busca as informações dos Consultas existentes para edição.
-- **Exclusão de Consultas médicas**: Permite excluir Consultas médicas do banco de dados.
-- **Visualização de Consultas médicas**: Lista todos os Consultas filtrando por sintomas.
+- **Cadastro de Pacientes**: Funcionalidade para manter os dados de pacientes.
+- **Consulta de Pacientes**: Funcionalidade que permite manter os dados de consultas de paciente, além de sugerir medicamentos utilizando iteligência artificial.
+
 
 
 ## Tecnologias Utilizadas
@@ -33,10 +26,54 @@ npm install
 - **JavaScript**: Manipulação dinâmica da DOM e comunicação com a API via `fetch`.
 
 ## Como Executar
-Basta executar o comando abaixo:
+Assim que iniciar as aplicações backend, basta executar o comando abaixo:
 
 ```
 npm start
 ```
+
+## Rodando via Docker (Precisa ter o Docker Instalado)
+
+Lembre-se de iniciar via docker as apis backend antes de iniciar a aplicação
+front end.
+
+```
+docker build -t web--medical-consulting .
+```
+
+Para executar o container, rode o comando abaixo:
+
+```
+docker run --name web--medical-consulting \
+    --network api-backend \  
+    -p 3200:5000 \
+    web--medical-consulting:latest
+```
+
+# Rodando via docker-compose
+
+Configure a chave da api key do gemini no service api-apointment no docker-compose.yaml:
+
+```
+    environment:
+        ...
+      - GEMINI_TOKEN=<SUA API KEY>cker-compose
+```
+
+Para rodar via docker-compose, efetue um comando abaixo:
+
+```
+docker compose up
+```
+
+Este comando executa todas as aplicações. 
+
+# Importante:
+
+- É necessário que os projetos api--patient, api--appointment e bff--medical-consulting  estejam no mesmo diretório. 
+- Não nenhum docker-compose nos projetos, para evitar conflito de portas do mysql e demais aplicações.
+
+#
+
 ## Autor
 Clayton Morais de Oliveira
