@@ -166,17 +166,17 @@ const AppointmentForm = () => {
 				  <form>
 					  <input type="hidden" name="id" value={formData.patient_id} />
 					  <div className="form-group m-2">
-						  <label for="zip">CRM do Médico</label>
+						  <label htmlFor="zip">CRM do Médico</label>
 						  <input type="text" className="form-control" name="doctor_crm" value={formData.doctor_crm} onChange={handleChange} placeholder="Digite o CRM do médico" />
 					  </div>
 	  
 					  <div className="form-group m-2">
-						  <label for="appointmentDate">Data da Consulta</label>
+						  <label htmlFor="appointmentDate">Data da Consulta</label>
 						  <input type="datetime-local" className="form-control" name="date_time" value={formData.date_time} onChange={handleChange} />
 					  </div>
 	  
 					  <div className="form-group m-2">
-						  <label for="symptoms">Sintomas Apresentados</label>
+						  <label htmlFor="symptoms">Sintomas Apresentados</label>
 						  <textarea className="form-control" name="symptoms" value={formData.symptoms} onChange={handleChange} rows="4" placeholder="Descreva os sintomas"></textarea>
 					  </div>
 

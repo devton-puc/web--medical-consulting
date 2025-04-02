@@ -97,7 +97,7 @@ const PatientList = () => {
       <div className="card-body">
             <form>
               <div className="form-group">
-                  <label for="name">Nome do Paciente</label>
+                  <label htmlFor="name">Nome do Paciente</label>
                   <div className="input-group">
                       <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Digite o nome do paciente" />
                       <button type="button" className="btn btn-secondary" onClick={()=> fetchPatients(1)} id="searchPatient">Buscar</button>

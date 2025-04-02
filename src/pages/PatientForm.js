@@ -93,10 +93,8 @@ const PatientForm = () => {
         { id: '3', name: 'Não especificado' },
     ]);
 
-    const handleChange = (e) => {
-        const { name } = e.target;
-        updateFormDataParent(e,setFormData);
-
+    const handleChange = (e) => {    
+        updateFormDataParent(e, setFormData, resetAddressForm, "zipcode");        
     };
 
  
@@ -201,27 +199,27 @@ const PatientForm = () => {
             <div className="card-body">
                 <form>
                     <div className="form-group m-2">
-                        <label for="name">Nome</label>
+                        <label htmlFor="name">Nome</label>
                         <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Digite o nome" />
                     </div>
 
                     <div className="form-group m-2">
-                        <label for="name">CPF</label>
+                        <label htmlFor="name">CPF</label>
                         <input type="text" className="form-control" name="personal_id" value={formData.personal_id} onChange={handleChange} placeholder="Digite o CPF" />
                     </div>
 
                     <div className="form-group m-2">
-                        <label for="email">E-mail</label>
+                        <label htmlFor="email">E-mail</label>
                         <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} placeholder="Digite o e-mail" />
                     </div>
 
                     <div className="form-group m-2">
-                        <label for="phone">Telefone</label>
+                        <label htmlFor="phone">Telefone</label>
                         <input type="tel" className="form-control" name="phone" value={formData.phone} onChange={handleChange} placeholder="Digite o telefone" />
                     </div>
 
                     <div className="form-group m-2"> 
-                        <label for="gender">Gênero</label>
+                        <label htmlFor="gender">Gênero</label>
                         <select className="form-control" name="gender" value={formData.gender} onChange={handleChange}>
                                 <option value="">Selecione</option>
                             {genders.map(genderItem => (
@@ -233,12 +231,12 @@ const PatientForm = () => {
                     </div>
 
                     <div className="form-group m-2">
-                        <label for="birthdate">Data de Nascimento</label>
+                        <label htmlFor="birthdate">Data de Nascimento</label>
                         <input type="date" className="form-control" name="birth_date" onChange={handleChange} value={formData.birth_date} />
                     </div>
 
                     <div className="form-group m-2">
-                        <label for="zip">CEP</label>
+                        <label htmlFor="zip">CEP</label>
                         <div className="input-group">
                             <input type="text" className="form-control" name="address.zipcode" placeholder="Digite o CEP" value={formData.address.zipcode} onChange={handleChange} />
                             <button type="button" className="btn btn-secondary" id="searchZip" onClick={() => handleFindAddress()}>Buscar</button>

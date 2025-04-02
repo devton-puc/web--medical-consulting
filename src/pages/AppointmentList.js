@@ -43,19 +43,17 @@ const AppointmentList = () => {
       showSpinner();
       PatientService.getPatientByPersonalId(formData.personalId)
           .then((data) => {
-            console.log(JSON.stringify(data));
-            setPatient(data);
-            setPatientId(data.id);
-            fetchAppointments(currentPage);
+              setPatient(data);
+              setPatientId(data.id);
+              fetchAppointments(currentPage);
           }).catch(error => {
-            showAlert(getAlertMessage(error), "danger");
-            hideSpinner();           
+              showAlert(getAlertMessage(error), "danger");
+              hideSpinner();           
           });
   }
 
   const fetchAppointments = (page) => {
-      
-      if (!formData.personalId && !patientId) {        
+      if (!patientId && patientId !== '') {        
         return;
       }; 
       showSpinner();
@@ -119,7 +117,7 @@ const AppointmentList = () => {
           <div className="card m-3">
               <div className="card-body">
                 <div className="form-group">
-                  <label for="name">CPF do Paciente</label>
+                  <label htmlFor="name">CPF do Paciente</label>
                   <form>
                     <div className="input-group">
                         <input type="text" className="form-control" name="personalId" value={formData.personalId} onChange={handleChange} placeholder="Digite o cpf do paciente" />

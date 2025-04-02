@@ -7,7 +7,7 @@ const Header = ({ toggleSidebar }) => {
             <button id="toggleSidebar" onClick={toggleSidebar}>
                 <i className="fas fa-bars"></i>
             </button>
-            <div class="logo-app d-flex align-items-left">
+            <div className="logo-app d-flex align-items-left">
                 <img src={logo} alt="Logo" className="img-logo me-2" />
                 <h2 className="mb-0">Medical Consulting</h2>
             </div>
