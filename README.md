@@ -4,8 +4,6 @@ Projeto MVP para disciplina **Desenvolvimento Back End Avançado**
 
 Este projeto é uma aplicação front-end desenvolvida com React. O objetivo é criar uma interface para gerenciar cadastro  de pacientes e de consultas, permitindo criar, editar, cancelar e visualizar informações.
 
-## Modelo Arquitetural
-
 ### Modelo de Arquitetura:
 
 1. **Camada de Frontend (React)**:
