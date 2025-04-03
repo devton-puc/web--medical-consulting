@@ -69,7 +69,9 @@ const AppointmentList = () => {
           setTotalPages(Math.ceil(data.total / data.per_page));
           hideSpinner();
         }).catch(error => {
-            showAlert(getAlertMessage(error), "danger");
+            if( error.httpStatus && error.httpStatus !== 204){
+              showAlert(getAlertMessage(error), "danger");
+            }            
             hideSpinner();         
         });
   };
@@ -158,38 +160,40 @@ const AppointmentList = () => {
 						                <button type="button" className="btn btn-primary mt-3" onClick={() => createAppointment()}>Criar Consulta</button>
 					              </div>
                         <div className="m-3"></div>
-                        <div className="card m-0">
-                          <div className="card-header">
-                              <h4>Consultas efetuadas</h4>
-                          </div>
-                          <div className="card-body">
-                            <PaginatedTable
-                                  currentPage={currentPage}
-                                  totalPages={totalPages} 
-                                  onPageChange={setCurrentPage} >
-                                  <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Data da Consulta</th>
-                                            <th>Crm do Medico</th>
-                                            <th>Sintomas apresentados</th>
-                                            <th>&nbsp;</th>
-                                        </tr>
-                                  </thead>
-                                  <tbody>
-                                    {appointments.map((appointment) => (
-                                      <tr key={appointment.id}>
-                                        <td>{appointment.id}</td>
-                                        <td><Link to={`/appointment-form/patient/${patient.id}/${appointment.id}`}>{new Date(appointment.date_time).toLocaleString()}</Link></td>
-                                        <td>{appointment.doctor_crm}</td>
-                                        <td>{appointment.symptoms}</td>
-                                        <td><button type="button" className="btn btn-danger" onClick={() => deleteAppointment(appointment.id)} >Excluir</button></td>
-                                      </tr>
-                                    ))}
-                                  </tbody>       
-                            </PaginatedTable> 
-                          </div>
-                        </div>
+                        {appointments.length > 0 && (
+                            <div className="card m-0">
+                                <div className="card-header">
+                                    <h4>Consultas efetuadas</h4>
+                                </div>
+                                <div className="card-body">
+                                   <PaginatedTable
+                                        currentPage={currentPage}
+                                        totalPages={totalPages} 
+                                        onPageChange={setCurrentPage} >
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Data da Consulta</th>
+                                                <th>Crm do Medico</th>
+                                                <th>Sintomas apresentados</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                          {appointments.map((appointment) => (
+                                            <tr key={appointment.id}>
+                                                <td>{appointment.id}</td>
+                                                <td><Link to={`/appointment-form/patient/${patient.id}/${appointment.id}`}>{new Date(appointment.date_time).toLocaleString()}</Link></td>
+                                                <td>{appointment.doctor_crm}</td>
+                                                <td>{appointment.symptoms}</td>
+                                                <td><button type="button" className="btn btn-danger" onClick={() => deleteAppointment(appointment.id)} >Excluir</button></td>
+                                            </tr>
+                                          ))}
+                                        </tbody>       
+                                    </PaginatedTable> 
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
               </>

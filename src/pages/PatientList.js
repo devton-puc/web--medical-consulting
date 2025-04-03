@@ -108,6 +108,7 @@ const PatientList = () => {
 			  </div>
               <div className="m-3"></div>             
             </form>
+          { patients.length > 0 && (
             <PaginatedTable
                 currentPage={currentPage}
                 totalPages={totalPages} 
@@ -133,6 +134,7 @@ const PatientList = () => {
                     ))}
                 </tbody> 
             </PaginatedTable> 
+          )}
       </div>
     </div>
   );
