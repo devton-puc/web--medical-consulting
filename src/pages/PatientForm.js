@@ -184,8 +184,9 @@ const PatientForm = () => {
             hideSpinner();
             return;
         };
-    
-        await AddressService.getAddressByCep(formData.address.zipcode)            
+
+        let zipcodeFormatted = formData.address.zipcode.replace(/-/g, '');    
+        await AddressService.getAddressByCep(zipcodeFormatted)            
             .then(data => {          
                 setFormData((prevData) => ({
                     ...prevData,
