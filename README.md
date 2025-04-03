@@ -81,14 +81,20 @@ Este comando executa todas as aplicações.
 
 ### Cadastro de Paciente
 ![Formulário de Endereço](files/cadastro-paciente-form-endereco.png)
+
 ![Formulário Principal](files/cadastro-paciente-form.png)
+
 ![Resultado do Cadastro](files/cadastro-paciente-resultado.png)
+
 ![Tela Inicial de Cadastro](files/cadastro-paciente.png)
 
 ### Consulta de Paciente
 ![Formulário de Geração de Medicamentos](files/consultar-paciente-form-gerar-medicamentos.png)
+
 ![Formulário Principal](files/consultar-paciente-form.png)
+
 ![Resultado da Consulta](files/consultar-paciente-resultado.png)
+
 ![Tela Inicial da Consulta](files/consultar-paciente.png)
 
 
