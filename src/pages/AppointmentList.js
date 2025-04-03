@@ -7,7 +7,7 @@ import { useSpinner } from '../providers/SpinnerContext';
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import { HttpError } from "../exceptions/HttpError";
+import  formatDate  from '../utils/FormatDate';
 import { getAlertMessage } from '../utils/MessageUtils';
 import { updateFormData ,validateFormData } from "../utils/FormUtils";
 
@@ -154,7 +154,7 @@ const AppointmentList = () => {
                         </div>
                         <div className="col-md-4">
                           <strong>Data de Nascimento:</strong>
-                          <p>{patient.birth_date}</p>
+                          <p>{formatDate(patient.birth_date)}</p>
                         </div>
                         <div className="col-md-4">
 						                <button type="button" className="btn btn-primary mt-3" onClick={() => createAppointment()}>Criar Consulta</button>

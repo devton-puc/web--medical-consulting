@@ -12,7 +12,7 @@ RUN npm run build
 
 FROM nginx:stable-alpine as final
 
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
 COPY --from=build /app/build /usr/share/nginx/html
 

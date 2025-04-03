@@ -1,15 +1,14 @@
-export const getAlertMessage = (error) => {
-    const alertMessages = {
-        HttpError: {
-            204: () => "Nenhum resultado encontrado",
-            default: (err) => err.body?.message || "Erro desconhecido"
-        },
-        default: (err) => `Erro: ${err}`
-    };
+import { HttpError } from "../exceptions/HttpError";
 
-    const errorType = error?.constructor?.name || 'default';
-    const statusHandler = alertMessages[errorType]?.[error?.httpStatus] || alertMessages[errorType]?.default || alertMessages.default;
-    return statusHandler(error);
+export const getAlertMessage = (error) => {
+    if (error instanceof HttpError) {
+        if (error.httpStatus === 204) {
+            return "Nenhum resultado encontrado";
+        }
+        return error.body?.message || error.body || error.constructor?.name || "Erro desconhecido";
+    }
+
+    return `Erro: ${error}`;
 };
 
 

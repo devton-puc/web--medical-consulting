@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { getAlertMessage } from '../utils/MessageUtils';
 import { updateFormData } from "../utils/FormUtils";
-import { HttpError } from "../exceptions/HttpError";
+import  formatDate  from '../utils/FormatDate';
 
 const PatientList = () => {
 
@@ -127,7 +127,7 @@ const PatientList = () => {
                     <tr key={patient.id}>
                         <td>{patient.id}</td>
                         <td><Link to={`/patient-form/${patient.id}`}>{patient.name}</Link></td>
-                        <td>{patient.birth_date}</td>
+                        <td>{formatDate(patient.birth_date)}</td>
                         <td>{patient.phone}</td>
                         <td><button type="button" className="btn btn-danger" onClick={() => deletePatient(patient.id)} >Excluir</button></td>
                     </tr>
