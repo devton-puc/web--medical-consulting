@@ -69,10 +69,14 @@ const AppointmentList = () => {
           setTotalPages(Math.ceil(data.total / data.per_page));
           hideSpinner();
         }).catch(error => {
-          if (error instanceof HttpError && error.httpStatus != 204){
-            showAlert(getAlertMessage(error), "danger");
-          }          
-          hideSpinner();           
+            const message = error instanceof HttpError && error.httpStatus === 204
+            ? "Nenhum resultado encontrado."
+            : error instanceof HttpError 
+              ? getAlertMessage(error) 
+              : error;
+        
+            showAlert(message, "danger");    
+            hideSpinner();           
         });
   };
 

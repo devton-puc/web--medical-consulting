@@ -69,8 +69,14 @@ const PatientList = () => {
               setLoading(false);
               hideSpinner();
             }).catch(error => {
-                showAlert(getAlertMessage(error), "danger"); 
-                hideSpinner();           
+                const message = error instanceof HttpError && error.httpStatus === 204
+                  ? "Nenhum resultado encontrado."
+                  : error instanceof HttpError 
+                    ? getAlertMessage(error) 
+                    : error;
+            
+                showAlert(message, "danger");    
+                hideSpinner();       
             });
     };
 
