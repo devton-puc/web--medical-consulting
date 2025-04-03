@@ -69,12 +69,8 @@ const AppointmentList = () => {
           setTotalPages(Math.ceil(data.total / data.per_page));
           hideSpinner();
         }).catch(error => {
-            const message = error instanceof HttpError && error.httpStatus !== 204
-              ? getAlertMessage(error) 
-              : error;
-        
-            showAlert(message, "danger");    
-            hideSpinner();           
+            showAlert(getAlertMessage(error), "danger");
+            hideSpinner();         
         });
   };
 
