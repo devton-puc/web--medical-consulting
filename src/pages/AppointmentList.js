@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { useModal } from '../providers/ModalContext';
 import AppointmentService from "../services/AppointmentService";
 import PatientService from "../services/PatientService";
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { HttpError } from "../exceptions/HttpError";
 import { getAlertMessage } from '../utils/MessageUtils';
-import { updateFormData } from "../utils/FormUtils";
+import { updateFormData ,validateFormData } from "../utils/FormUtils";
 
 const AppointmentList = () => {
 
@@ -24,6 +24,7 @@ const AppointmentList = () => {
   const navigate = useNavigate();
   const location = useLocation();  
   const { success, message } = location?.state || {};
+  const formRef = useRef(null);
 
   
   useEffect(() => {
@@ -105,6 +106,15 @@ const AppointmentList = () => {
 	    }); 
   }
 
+  const submitSearchPatientAppointment = ()=>{
+    const errors = validateFormData(formData,formRef.current);
+      if (errors.length > 0 ){
+        showAlert("Preencha os campos obrigatórios.","danger");
+        return;
+      }
+      fetchPatientAppointment();
+  }
+
 
 
   return (
@@ -118,10 +128,10 @@ const AppointmentList = () => {
               <div className="card-body">
                 <div className="form-group">
                   <label htmlFor="name">CPF do Paciente</label>
-                  <form>
+                  <form ref={formRef}>
                     <div className="input-group">
-                        <input type="text" className="form-control" name="personalId" value={formData.personalId} onChange={handleChange} placeholder="Digite o cpf do paciente" />
-                        <a className="btn btn-secondary" onClick={()=>fetchPatientAppointment()} id="searchPatient">Buscar</a>
+                        <input type="text" className="form-control" name="personalId" required value={formData.personalId} onChange={handleChange} placeholder="Digite o cpf do paciente" />
+                        <a className="btn btn-secondary" onClick={()=>submitSearchPatientAppointment()} id="searchPatient">Buscar</a>
                     </div>
                   </form>
                 </div>

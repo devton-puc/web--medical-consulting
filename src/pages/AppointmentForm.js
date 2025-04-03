@@ -1,11 +1,11 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import AppointmentService from "../services/AppointmentService";
 import { useSpinner } from '../providers/SpinnerContext';
 import { useModal } from '../providers/ModalContext';
 import { useParams } from "react-router-dom";
 import { getAlertMessage } from '../utils/MessageUtils';
-import { updateFormData } from "../utils/FormUtils";
+import { updateFormData ,validateFormData } from "../utils/FormUtils";
 
 const AppointmentForm = () => {
 
@@ -22,10 +22,12 @@ const AppointmentForm = () => {
   const navigate = useNavigate();
   const { showSpinner, hideSpinner } = useSpinner();
   const { showAlert } = useModal();
-  console.log(action);
   const [idAppointment, setIdAppointment] = useState(action);
   const [formData, setFormData] = useState(initialState);
   const [medications, setMedications] = useState([]);
+  const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
+  const hasFetched = useRef(false);
 
   const changeFormData = (data = initialState) => {
     setFormData(data);
@@ -39,8 +41,11 @@ const AppointmentForm = () => {
 	}
   };
 
-  useLayoutEffect(() => {        
-	fetchAppointment();
+  useLayoutEffect(() => {
+	if (!hasFetched.current) {
+	  fetchAppointment();
+	  hasFetched.current = true;
+	}
   }, []);
   
   const fetchAppointment = ()=>{
@@ -132,7 +137,6 @@ const AppointmentForm = () => {
   }; 
 
   const handleAction = (action) => {
-	console.log(idAppointment);
 	const executeAction = action === "create" 
 	? actionHandlers.create 
 	: actionHandlers.default;
@@ -141,6 +145,13 @@ const AppointmentForm = () => {
 
 
   const handleSubmit = () => {	
+
+	const errors = validateFormData(formData,formRef.current);
+	if (errors.length > 0 && ( medications.length === 0 ) ){
+		showAlert("Preencha os campos obrigatórios.","danger");
+		return;
+	}
+
 	showSpinner();
 	handleAction(action);
   };
@@ -163,21 +174,21 @@ const AppointmentForm = () => {
 			<div className="card">
 			  <div className="card-header">Efetuar Consulta Médica</div>
 			  <div className="card-body">
-				  <form>
+				  <form ref={formRef}>
 					  <input type="hidden" name="id" value={formData.patient_id} />
 					  <div className="form-group m-2">
 						  <label htmlFor="zip">CRM do Médico</label>
-						  <input type="text" className="form-control" name="doctor_crm" value={formData.doctor_crm} onChange={handleChange} placeholder="Digite o CRM do médico" />
+						  <input type="text" className="form-control" name="doctor_crm" required value={formData.doctor_crm} onChange={handleChange} placeholder="Digite o CRM do médico" />
 					  </div>
 	  
 					  <div className="form-group m-2">
 						  <label htmlFor="appointmentDate">Data da Consulta</label>
-						  <input type="datetime-local" className="form-control" name="date_time" value={formData.date_time} onChange={handleChange} />
+						  <input type="datetime-local" className="form-control" name="date_time" required value={formData.date_time} onChange={handleChange} />
 					  </div>
 	  
 					  <div className="form-group m-2">
 						  <label htmlFor="symptoms">Sintomas Apresentados</label>
-						  <textarea className="form-control" name="symptoms" value={formData.symptoms} onChange={handleChange} rows="4" placeholder="Descreva os sintomas"></textarea>
+						  <textarea className="form-control" name="symptoms" required value={formData.symptoms} onChange={handleChange} rows="4" placeholder="Descreva os sintomas"></textarea>
 					  </div>
 
 					  <div className="mb-3 d-flex m-2">

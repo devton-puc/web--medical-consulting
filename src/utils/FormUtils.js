@@ -24,13 +24,20 @@ export const updateFormDataParent = (event, setFormData, onEmptyFieldAction = nu
     });
 };
 
-export const validateFormData = (formData, requiredFields) => {
-    const validateFields = (data, keys) => {
-        return keys.every((key) => {
-            const value = key.split('.').reduce((acc, k) => acc?.[k], data);
-            return value !== undefined && value !== null && value !== '';
-        });
-    };
-
-    return validateFields(formData, requiredFields);
-};
+export const validateFormData = (formData, formElement) => {
+    let errors = [];  
+    if (!formElement) return errors;
+    const requiredFields = formElement.querySelectorAll("[required]");  
+    requiredFields.forEach((input) => {
+      const path = input.name.split(".");
+      const getNestedValue = (obj, keys) => keys.reduce((acc, key) => (acc && acc[key] ? acc[key] : ""), obj);
+      const value = getNestedValue(formData, path);
+      if (value === "") {
+        errors.push(input.name);;
+      }
+    });  
+    return errors;
+  };
+  
+  export default validateFormData;
+  

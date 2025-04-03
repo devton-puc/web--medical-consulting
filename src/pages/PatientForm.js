@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import AddressService from "../services/AddressService";
 import PatientService from "../services/PatientService";
@@ -6,7 +6,7 @@ import { useSpinner } from '../providers/SpinnerContext';
 import { useModal } from '../providers/ModalContext';
 import { useParams } from "react-router-dom";
 import { getAlertMessage } from '../utils/MessageUtils';
-import { updateFormData, updateFormDataParent } from "../utils/FormUtils";
+import { validateFormData, updateFormDataParent } from "../utils/FormUtils";
 
 const PatientForm = () => {
 
@@ -17,6 +17,8 @@ const PatientForm = () => {
     const { showSpinner, hideSpinner } = useSpinner();
     const { showAlert, } = useModal();
     const [idPatient, setIdPatient] = useState(action);
+    const formRef = useRef(null);
+    const hasFetched = useRef(false);
     const initialState = {        
             name: "",
             personal_id: "",
@@ -34,38 +36,11 @@ const PatientForm = () => {
             },          
     };    
 
-    useLayoutEffect(() => {        
-        if (action === 'create'){
-                setLoading(true)
-                return;
-        }
-        showSpinner();
-        PatientService.getPatientById(idPatient)
-            .then(data => {                
-                setLoading(true);
-                setFormData({
-                    
-                    name: data.name || "",
-                    personal_id: data.personal_id || "",
-                    birth_date: data.birth_date || "",
-                    email: data.email || "",
-                    phone: data.phone || "",
-                    gender: data.gender || "",
-                    address: {
-                        zipcode: data.address?.zipcode || "",
-                        address: data.address?.address || "",
-                        neighborhood: data.address?.neighborhood || "",
-                        city: data.address?.city || "",
-                        state: data.address?.state || "",
-                        number: data.address?.number || "",
-                      },
-                    });
-                hideSpinner();
-        }).catch(error => {
-            showAlert(getAlertMessage(error), "danger"); 
-            hideSpinner();           
-        });
-
+    useLayoutEffect(() => { 
+        if (!hasFetched.current) {       
+            fetchPatient();
+            hasFetched.current = true;
+	    }
     }, []);
 
     const [formData, setFormData] = useState(initialState);
@@ -98,6 +73,39 @@ const PatientForm = () => {
     };
 
  
+    const fetchPatient = ()=>{
+        if (action === 'create'){
+            setLoading(true)
+            return;
+        }
+        showSpinner();
+        PatientService.getPatientById(idPatient)
+            .then(data => {                
+                setLoading(true);
+                setFormData({
+                    
+                    name: data.name || "",
+                    personal_id: data.personal_id || "",
+                    birth_date: data.birth_date || "",
+                    email: data.email || "",
+                    phone: data.phone || "",
+                    gender: data.gender || "",
+                    address: {
+                        zipcode: data.address?.zipcode || "",
+                        address: data.address?.address || "",
+                        neighborhood: data.address?.neighborhood || "",
+                        city: data.address?.city || "",
+                        state: data.address?.state || "",
+                        number: data.address?.number || "",
+                    },
+                    });
+                hideSpinner();
+        }).catch(error => {
+            showAlert(getAlertMessage(error), "danger"); 
+            hideSpinner();           
+        });
+
+    }
 
 
     const fetchCreatePatient = ()=>{
@@ -148,6 +156,13 @@ const PatientForm = () => {
     
 
     const handleSubmit = () => {
+        const errors = validateFormData(formData,formRef.current);
+        console.log(errors);
+        if (errors.length > 0 ){
+            showAlert("Preencha os campos obrigatórios.","danger");
+            return;
+        }
+
         showSpinner();
         handleAction(action);
     };
@@ -197,30 +212,30 @@ const PatientForm = () => {
         <div className="card">
             <div className="card-header">Cadastro de Paciente</div>
             <div className="card-body">
-                <form>
+                <form ref={formRef}>
                     <div className="form-group m-2">
                         <label htmlFor="name">Nome</label>
-                        <input type="text" className="form-control" name="name" value={formData.name} onChange={handleChange} placeholder="Digite o nome" />
+                        <input type="text" className="form-control" name="name" required value={formData.name} onChange={handleChange} placeholder="Digite o nome" />
                     </div>
 
                     <div className="form-group m-2">
                         <label htmlFor="name">CPF</label>
-                        <input type="text" className="form-control" name="personal_id" value={formData.personal_id} onChange={handleChange} placeholder="Digite o CPF" />
+                        <input type="text" className="form-control" name="personal_id" required value={formData.personal_id} onChange={handleChange} placeholder="Digite o CPF" />
                     </div>
 
                     <div className="form-group m-2">
                         <label htmlFor="email">E-mail</label>
-                        <input type="email" className="form-control" name="email" value={formData.email} onChange={handleChange} placeholder="Digite o e-mail" />
+                        <input type="email" className="form-control" name="email" required value={formData.email} onChange={handleChange} placeholder="Digite o e-mail" />
                     </div>
 
                     <div className="form-group m-2">
                         <label htmlFor="phone">Telefone</label>
-                        <input type="tel" className="form-control" name="phone" value={formData.phone} onChange={handleChange} placeholder="Digite o telefone" />
+                        <input type="tel" className="form-control" name="phone" required value={formData.phone} onChange={handleChange} placeholder="Digite o telefone" />
                     </div>
 
                     <div className="form-group m-2"> 
                         <label htmlFor="gender">Gênero</label>
-                        <select className="form-control" name="gender" value={formData.gender} onChange={handleChange}>
+                        <select className="form-control" name="gender" required value={formData.gender} onChange={handleChange}>
                                 <option value="">Selecione</option>
                             {genders.map(genderItem => (
                                 <option key={genderItem.id} value={genderItem.name}>
@@ -232,13 +247,13 @@ const PatientForm = () => {
 
                     <div className="form-group m-2">
                         <label htmlFor="birthdate">Data de Nascimento</label>
-                        <input type="date" className="form-control" name="birth_date" onChange={handleChange} value={formData.birth_date} />
+                        <input type="date" className="form-control" name="birth_date" required onChange={handleChange} value={formData.birth_date} />
                     </div>
 
                     <div className="form-group m-2">
                         <label htmlFor="zip">CEP</label>
                         <div className="input-group">
-                            <input type="text" className="form-control" name="address.zipcode" placeholder="Digite o CEP" value={formData.address.zipcode} onChange={handleChange} />
+                            <input type="text" className="form-control" name="address.zipcode" required placeholder="Digite o CEP" value={formData.address.zipcode} onChange={handleChange} />
                             <button type="button" className="btn btn-secondary" id="searchZip" onClick={() => handleFindAddress()}>Buscar</button>
                         </div>
                     </div>
@@ -247,28 +262,28 @@ const PatientForm = () => {
                             <>
                             <div className="form-group m-2">
                                 <label htmlFor="address">Endereço</label>
-                                <input type="text" className="form-control" name="address.address" value={formData.address.address} readOnly />
+                                <input type="text" className="form-control" name="address.address" required value={formData.address.address} readOnly />
                             </div>
 
                             <div className="form-group m-2">
                                 <label htmlFor="neighborhood">Bairro</label>
-                                <input type="text" className="form-control" name="address.neighborhood" value={formData.address.neighborhood} readOnly />
+                                <input type="text" className="form-control" name="address.neighborhood" required value={formData.address.neighborhood} readOnly />
                             </div>
 
 
                             <div className="form-group m-2">
                                 <label htmlFor="city">Cidade</label>
-                                <input type="text" className="form-control" name="address.city" value={formData.address.city} readOnly />
+                                <input type="text" className="form-control" name="address.city" required value={formData.address.city} readOnly />
                             </div>
 
                             <div className="form-group m-2">
                                 <label htmlFor="state">Estado</label>
-                                <input type="text" className="form-control" name="address.state" value={formData.address.state} readOnly />
+                                <input type="text" className="form-control" name="address.state" required value={formData.address.state} readOnly />
                             </div>
 
                             <div className="form-group m-2">
                                 <label htmlFor="number">Número</label>
-                                <input type="text" className="form-control" name="address.number" value={formData.address.number} onChange={handleChange} placeholder="Digite o número" />
+                                <input type="text" className="form-control" name="address.number" required value={formData.address.number} onChange={handleChange} placeholder="Digite o número" />
                             </div>
 
                             </>
