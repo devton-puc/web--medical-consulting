@@ -59,7 +59,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=password
       - GEMINI_AI_URL=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
-      - GEMINI_TOKEN=AIzaSyDOHTz-WwaJlDWODvnzMedP1ZImWSvNA-Y
+      - GEMINI_TOKEN=<SEU TOKEN>
     ports:
       - "4000:5000"
     healthcheck:
