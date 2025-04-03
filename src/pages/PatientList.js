@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { getAlertMessage } from '../utils/MessageUtils';
 import { updateFormData } from "../utils/FormUtils";
-
+import { HttpError } from "../exceptions/HttpError";
 
 const PatientList = () => {
 
