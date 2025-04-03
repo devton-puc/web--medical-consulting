@@ -97,7 +97,7 @@ Este comando executa todas as aplicações.
 # Importante:
 
 - É necessário que os projetos api--patient, api--appointment e bff--medical-consulting  estejam no mesmo diretório. 
-- Não nenhum docker-compose nos projetos, para evitar conflito de portas do mysql e demais aplicações.
+- Não rode nenhum docker-compose dos demais projetos, para evitar conflito de portas do mysql e demais aplicações.
 
 
 ## Imagens da aplicação:
