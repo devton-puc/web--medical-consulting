@@ -4,6 +4,34 @@ Projeto MVP para disciplina **Desenvolvimento Back End Avançado**
 
 Este projeto é uma aplicação front-end desenvolvida com React. O objetivo é criar uma interface para gerenciar cadastro  de pacientes e de consultas, permitindo criar, editar, cancelar e visualizar informações.
 
+## Modelo Arquitetural
+
+### Modelo de Arquitetura:
+
+1. **Camada de Frontend (React)**:
+   - Aplicação `react web--medical-consulting` é responsável por interagir com os e fazer a integração com a API.
+
+2. **Camada de BFF (Backend For Frontend)**:
+   - A API `bff--medical-consulting` utiliza arquitetura bff (backend for front end), processando as solicitações e coordenando as interações entre a aplicação e os serviços backend.
+
+3. **O BFF se conecta as seguintes apis**:
+   - `api--patient`: Gerencia os dados dos pacientes (ex.: informações de cadastro, histórico médico).
+   - `api--appointment`: Lida com agendamentos e consulta a serviços externos.
+   - `viacep (externa)`: Serviço externo para obter endereços com base nos CEPs fornecidos.
+
+4. **Integração com Serviço Externo**:
+   - A API `api--appointment` conecta-se à `API do Google Gemini`, que retorna os medicamentos recomendados com base nos sintomas.
+
+### Fluxo:
+1. **Médico** na aplicação React realiza uma ação (ex.: busca por pacientes).
+2. **BFF--Medical-Consulting** recebe a solicitação e a distribui para os serviços backend.
+3. APIs backend processam os dados e, se necessário, utilizam serviços externos (ex.: ViaCEP, Google Gemini).
+4. Os dados consolidados retornam para o BFF e, em seguida, para o Frontend.
+
+![Modelo de Arquitetura](files/Medical Consulting.drawio.png)
+
+
+
 ## Funcionalidades
 
 ## Pré-requisitos
