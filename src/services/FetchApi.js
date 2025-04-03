@@ -6,7 +6,7 @@ export async function fetchApi(endpoint, options = {}) {
 }
 
 const handleResponse = async(response) =>{
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 201) {
         const errorBody = await response.json().catch(() => null); 
         throw new HttpError("Erro ao executar o aerviço.", response.status, errorBody);
     }
