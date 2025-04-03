@@ -28,7 +28,7 @@ Este projeto é uma aplicação front-end desenvolvida com React. O objetivo é 
 3. APIs backend processam os dados e, se necessário, utilizam serviços externos (ex.: ViaCEP, Google Gemini).
 4. Os dados consolidados retornam para o BFF e, em seguida, para o Frontend.
 
-![Modelo de Arquitetura](files/Medical Consulting.drawio.png)
+![Modelo de Arquitetura](files/medical-consulting-arquitetura.png)
 
 
 
