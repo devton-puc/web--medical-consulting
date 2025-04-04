@@ -2,7 +2,8 @@ import httpStrategies from "./HttpStrategies";
 import { fetchApi } from "./FetchApi";
 
 const AppointmentService = () => {
-    const BASE_URL = "http://localhost:5000/bff/appointment";
+    const BASE_URL = `${process.env.REACT_APP_API_URL}/bff/appointment`;
+
 
     const listAppointments = async (filter) => {
         let options = httpStrategies.POST;

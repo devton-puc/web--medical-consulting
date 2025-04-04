@@ -2,7 +2,7 @@ import httpStrategies from "./HttpStrategies";
 import { fetchApi } from "./FetchApi";
 
 const PatientService = () => {
-    const BASE_URL = "http://localhost:5000/bff/patient";
+    const BASE_URL = `${process.env.REACT_APP_API_URL}/bff/patient`;
 
     const listPatients = async (filter) => {
         let options = httpStrategies.POST;
